@@ -5,6 +5,8 @@ import android.content.Context
 import android.os.Process
 import android.provider.Settings
 import android.app.Application
+import com.appkiller.pro.util.KillCounter
+import com.appkiller.pro.data.AppRepository
 
 class AppKillerApp : Application() {
 

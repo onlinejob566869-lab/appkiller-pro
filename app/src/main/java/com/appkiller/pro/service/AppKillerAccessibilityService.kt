@@ -1,7 +1,7 @@
 package com.appkiller.pro.service
 
 import android.accessibilityservice.AccessibilityService
-import android.app.Settings
+import android.provider.Settings
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper

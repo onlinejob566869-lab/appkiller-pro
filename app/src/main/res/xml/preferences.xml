@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="General">
+        <SwitchPreferenceCompat
+            app:key="auto_kill_enabled"
+            app:title="@string/auto_kill"
+            app:summary="@string/auto_kill_desc"
+            app:defaultValue="false" />
+
+        <SwitchPreferenceCompat
+            app:key="show_system_apps"
+            app:title="@string/show_system_apps"
+            app:defaultValue="false" />
+
+        <ListPreference
+            app:key="sort_by"
+            app:title="@string/sort_by"
+            app:entries="@array/sort_options"
+            app:entryValues="@array/sort_values"
+            app:defaultValue="name" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Stats">
+        <Preference
+            app:key="kill_count"
+            app:title="@string/kill_count" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="About">
+        <Preference
+            app:key="about"
+            app:title="@string/about"
+            app:summary="@string/about_desc" />
+    </PreferenceCategory>
+</PreferenceScreen>

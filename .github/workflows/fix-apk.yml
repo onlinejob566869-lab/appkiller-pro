@@ -1,4 +1,4 @@
-name: Fix and Build APK
+name: Fix Original AppKiller APK
 
 on:
   push:
@@ -20,8 +20,6 @@ jobs:
       - name: Download apktool
         run: |
           wget -q https://github.com/iBotPeaches/Apktool/releases/download/v2.9.3/apktool_2.9.3.jar -O apktool.jar
-          wget -q https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool -O apktool
-          chmod +x apktool
 
       - name: Download uber-apk-signer
         run: |
@@ -29,19 +27,14 @@ jobs:
 
       - name: Decompile original APK
         run: |
-          java -jar apktool.jar d original-apk/app-debug.apk -o decoded -f
+          java -jar apktool.jar d original-apk/appkiller_orig.apk -o decoded -f
 
-      - name: Fix splash_background.xml
+      - name: Patch integrity check - bypass SavesRestoringPortable.DoSmth
         run: |
-          cat > decoded/res/drawable/splash_background.xml << 'XMLEOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <layer-list
-            xmlns:android="http://schemas.android.com/apk/res/android">
-              <item android:drawable="@color/primary" />
-          </layer-list>
-          XMLEOF
-          echo "Fixed splash_background.xml:"
-          cat decoded/res/drawable/splash_background.xml
+          # Remove the DoSmth call in App.smali that causes crash on re-signed APK
+          sed -i '/invoke-static\/range {p0 .. p0}, Lcom\/TryRoom\/SavesRestoringPortable;->DoSmth(Landroid\/content\/Context;)V/d' decoded/smali/com/redsoft/appkiller/App.smali
+          echo "=== Patched App.smali onCreate ==="
+          grep -A 20 "onCreate" decoded/smali/com/redsoft/appkiller/App.smali | head -25
 
       - name: Recompile APK
         run: |
@@ -50,7 +43,8 @@ jobs:
       - name: Sign APK
         run: |
           java -jar uber-apk-signer.jar -a appkiller-fixed-unsigned.apk -o signed-output
-          cp signed-output/appkiller-fixed-unsigned-debug.apk appkiller-fixed.apk || cp signed-output/*.apk appkiller-fixed.apk
+          ls -la signed-output/
+          cp signed-output/appkiller-fixed-unsigned-aligned-debugSigned.apk appkiller-fixed.apk 2>/dev/null || cp signed-output/*.apk appkiller-fixed.apk
 
       - name: Upload fixed APK
         uses: actions/upload-artifact@v4
